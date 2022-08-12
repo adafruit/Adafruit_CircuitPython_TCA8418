@@ -4,16 +4,16 @@
 
 import time
 import board
-import adafruit_tca8418
+from adafruit_tca8418 import TCA8418
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 
 from adafruit_debug_i2c import DebugI2C
 debug_i2c = DebugI2C(i2c)
 
-tca = adafruit_tca8418.TCA8418(debug_i2c)
+tca = TCA8418(debug_i2c)
 
-OUTPIN = 0
+OUTPIN = TCA8418.R0
 
 tca.gpio_mode[OUTPIN] = True
 tca.gpio_direction[OUTPIN] = True

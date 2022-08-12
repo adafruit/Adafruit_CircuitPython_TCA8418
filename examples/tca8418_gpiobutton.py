@@ -13,8 +13,8 @@ debug_i2c = DebugI2C(i2c)
 
 tca = adafruit_tca8418.TCA8418(debug_i2c)
 
-OUTPIN = 0
-INPIN = 1
+OUTPIN = TCA8418.R0
+INPIN = TCA8418.R1
 
 tca.gpio_mode[OUTPIN] = True
 tca.gpio_mode[INPIN] = True

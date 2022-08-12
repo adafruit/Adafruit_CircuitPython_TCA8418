@@ -20,9 +20,16 @@ tca.gpio_mode[OUTPIN] = True
 tca.gpio_mode[INPIN] = True
 
 tca.gpio_direction[OUTPIN] = True
+
+# input with pullup
 tca.gpio_direction[INPIN] = False
 tca.pullup[INPIN] = True
 
+# interrupt on fall
+tca.int_on_rising[INPIN] = False
+tca.enable_int[INPIN] = True
+
 while True:
     tca.output_value[OUTPIN] = tca.input_value[INPIN]
+    print(hex(tca.gpio_int_status))
     time.sleep(0.01)
