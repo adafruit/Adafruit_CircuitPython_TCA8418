@@ -38,8 +38,16 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TCA8418.git"
 
 from micropython import const
 from adafruit_bus_device import i2c_device
+from adafruit_register.i2c_struct import ROUnaryStruct, UnaryStruct
+from adafruit_register.i2c_bit import RWBit, ROBit
+from adafruit_register.i2c_bits import RWBits, ROBits
+
 
 TCA8418_I2CADDR_DEFAULT: int = const(0x34)  # Default I2C address
+
+_TCA8418_REG_INTSTAT = const(0x02)
+_TCA8418_REG_KEYLCKEC = const(0x03)
+_TCA8418_REG_KEYEVENT = const(0x04)
 
 _TCA8418_REG_GPIODATSTAT1 = const(0x14)
 _TCA8418_REG_GPIODATOUT1 = const(0x17)
@@ -48,9 +56,8 @@ _TCA8418_REG_KPGPIO1 = const(0x1D)
 _TCA8418_REG_GPIOINTSTAT1 = const(0x11)
 
 _TCA8418_REG_EVTMODE1 = const(0x20)
-
 _TCA8418_REG_GPIODIR1 = const(0x23)
-_TCA8418_REG_INTLVL1 = const(0x29)
+_TCA8418_REG_INTLVL1 = const(0x26)
 _TCA8418_REG_DEBOUNCEDIS1 = const(0x29)
 _TCA8418_REG_GPIOPULL1 = const(0x2C)
 
@@ -100,6 +107,14 @@ class TCA8418:
     :param address: The I2C device address. Defaults to :const:`0x34`
     """
 
+    events_count = ROBits(4, _TCA8418_REG_KEYLCKEC, 0)
+    CAD_int = RWBit(_TCA8418_REG_INTSTAT, 4)
+    overflow_int = RWBit(_TCA8418_REG_INTSTAT, 3)
+    keylock_int = RWBit(_TCA8418_REG_INTSTAT, 2)
+    GPI_int = RWBit(_TCA8418_REG_INTSTAT, 1)
+    key_int = RWBit(_TCA8418_REG_INTSTAT, 0)
+
+
     R0 = 0
     R1 = 1
     R2 = 2
@@ -124,6 +139,11 @@ class TCA8418:
         self.i2c_device = i2c_device.I2CDevice(i2c_bus, address)
         self._buf = bytearray(2)
 
+        # disable all interrupt
+        self.enable_int = TCA8418_register(self, _TCA8418_REG_INTEN1, initial_value=0)
+        self.gpio_int_status = TCA8418_register(self, _TCA8418_REG_GPIOINTSTAT1, read_only=True)
+        x = self.gpio_int_status # read to clear
+
         # plain GPIO expansion as indexable properties
 
         # set all pins to inputs
@@ -140,9 +160,25 @@ class TCA8418:
         self.debounce = TCA8418_register(self, _TCA8418_REG_DEBOUNCEDIS1, invert_value=True, initial_value=0)
         # default int on falling
         self.int_on_rising = TCA8418_register(self, _TCA8418_REG_INTLVL1, initial_value=0)
-        # disable all interrupt
-        self.enable_int = TCA8418_register(self, _TCA8418_REG_INTEN1, initial_value=0)
-        self.gpio_int_status = TCA8418_register(self, _TCA8418_REG_GPIOINTSTAT1, read_only=True)
+        
+        # default no gpio in event queue
+        self.event_mode_fifo = TCA8418_register(self, _TCA8418_REG_EVTMODE1, initial_value=0)
+
+        # read event queue
+        print(self.events_count, "events")
+        while self.events_count:
+            x = self.next_event # read and toss
+
+        # reset interrutps
+        self._write_reg(_TCA8418_REG_INTSTAT, 0x1F)
+        self.GPI_int = False
+
+    @property
+    def next_event(self):
+        if self.events_count == 0:
+            raise RuntimeError("No events in FIFO")
+        return self._read_reg(_TCA8418_REG_KEYEVENT)
+
 
     def _set_gpio_register(self, reg_base_addr, pin_number, value):
         if not 0 <= pin_number <= 17:
