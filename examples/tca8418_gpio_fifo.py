@@ -24,20 +24,27 @@ for pin in INPINS:
     tca.gpio_direction[pin] = False
     tca.pullup[pin] = True
 
-    # make sure the in pin generates FIFO events
+    # make sure the key pins generate FIFO events
     tca.enable_int[pin] = True
+    # we will stick events into the FIFO queue
     tca.event_mode_fifo[pin] = True
+
+# turn on INT output pin, note we're using the GPIO as key events
+# so we want to enable the *key event* interrupt!
+tca.key_intenable = True
+
 
 while True:
     if tca.GPI_int:
-        # print("IRQ! ", hex(int(tca.gpio_int_status)))
+        # first figure out how big the queue is
         events = tca.events_count
+        # now print each event in the queue
         for _ in range(events):
             keyevent = tca.next_event
             print("\tKey event: 0x%02X - GPIO #%d "  % (keyevent, (keyevent&0xF) - 1), end="")
-            if keyevent & 0xF0 == 0xE0:
+            if keyevent & 0x80:
                 print("key down")
-            if keyevent & 0xF0 == 0x60:
+            else:
                 print("key up")
         tca.GPI_int = True # clear the IRQ by writing 1 to it
-
+        time.sleep(0.01)

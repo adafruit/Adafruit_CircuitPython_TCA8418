@@ -45,6 +45,7 @@ from adafruit_register.i2c_bits import RWBits, ROBits
 
 TCA8418_I2CADDR_DEFAULT: int = const(0x34)  # Default I2C address
 
+_TCA8418_REG_CONFIG = const(0x01)
 _TCA8418_REG_INTSTAT = const(0x02)
 _TCA8418_REG_KEYLCKEC = const(0x03)
 _TCA8418_REG_KEYEVENT = const(0x04)
@@ -114,6 +115,13 @@ class TCA8418:
     GPI_int = RWBit(_TCA8418_REG_INTSTAT, 1)
     key_int = RWBit(_TCA8418_REG_INTSTAT, 0)
 
+    gpi_event_while_locked = RWBit(_TCA8418_REG_CONFIG, 6)
+    overflow_mode = RWBit(_TCA8418_REG_CONFIG, 5)
+    int_retrigger = RWBit(_TCA8418_REG_CONFIG, 4)
+    overflow_intenable = RWBit(_TCA8418_REG_CONFIG, 3)
+    keylock_intenable = RWBit(_TCA8418_REG_CONFIG, 2)
+    GPI_intenable = RWBit(_TCA8418_REG_CONFIG, 1)
+    key_intenable = RWBit(_TCA8418_REG_CONFIG, 0)
 
     R0 = 0
     R1 = 1
