@@ -41,7 +41,7 @@ from adafruit_bus_device import i2c_device
 from adafruit_register.i2c_struct import ROUnaryStruct, UnaryStruct
 from adafruit_register.i2c_bit import RWBit, ROBit
 from adafruit_register.i2c_bits import RWBits, ROBits
-
+import digitalio
 
 TCA8418_I2CADDR_DEFAULT: int = const(0x34)  # Default I2C address
 
@@ -172,8 +172,8 @@ class TCA8418:
         # default no gpio in event queue
         self.event_mode_fifo = TCA8418_register(self, _TCA8418_REG_EVTMODE1, initial_value=0)
 
-        # read event queue
-        print(self.events_count, "events")
+        # read in event queue
+        #print(self.events_count, "events")
         while self.events_count:
             x = self.next_event # read and toss
 
@@ -202,6 +202,15 @@ class TCA8418:
         return self._get_reg_bit(reg_base_addr, pin_number % 8)
 
 
+    def get_pin(self, pin):
+        """Convenience function to create an instance of the DigitalInOut class
+        pointing at the specified pin of this TCA8418 device.
+        :param int pin: pin to use for digital IO, 0 to 17
+        """
+        assert 0 <= pin <= 17
+        return DigitalInOut(pin, self)
+
+
     # register helpers
 
     def _set_reg_bit(self, addr, bitoffset, value):
@@ -228,3 +237,90 @@ class TCA8418:
             self._buf[0] = addr
             i2c.write_then_readinto(self._buf, self._buf, out_end=1, in_end=1)
         return self._buf[0]
+
+
+"""
+`digital_inout`
+====================================================
+Digital input/output of the TCA8418.
+* Author(s): Tony DiCola
+"""
+
+
+class DigitalInOut:
+    """Digital input/output of the TCA8418.  The interface is exactly the
+    same as the digitalio.DigitalInOut class, however:
+      * TCA8418 does not support pull-down resistors
+    Exceptions will be thrown when attempting to set unsupported pull
+    configurations.
+    """
+
+    def __init__(self, pin_number, tca):
+        """Specify the pin number of the TCA8418 0..17, and instance."""
+        self._pin = pin_number
+        self._tca = tca
+        self._tca.gpio_mode[pin_number] = True
+
+
+    # kwargs in switch functions below are _necessary_ for compatibility
+    # with DigitalInout class (which allows specifying pull, etc. which
+    # is unused by this class).  Do not remove them, instead turn off pylint
+    # in this case.
+    # pylint: disable=unused-argument
+    def switch_to_output(self, value=False, **kwargs):
+        """Switch the pin state to a digital output with the provided starting
+        value (True/False for high or low, default is False/low).
+        """
+        self.direction = digitalio.Direction.OUTPUT
+        self.value = value
+
+    def switch_to_input(self, pull=None, **kwargs):
+        """Switch the pin state to a digital input which is the same as
+        setting the light pullup on.  Note that true tri-state or
+        pull-down resistors are NOT supported!
+        """
+        self.direction = digitalio.Direction.INPUT
+        self.pull = pull
+
+    # pylint: enable=unused-argument
+
+    @property
+    def value(self):
+        """The value of the pin, either True for high/pulled-up or False for
+        low.
+        """
+        return self._tca.input_value[self._pin]
+
+    @value.setter
+    def value(self, val):
+        self._tca.output_value[self._pin] = val
+
+    @property
+    def direction(self):
+        return self._dir
+
+    @direction.setter
+    def direction(self, val):
+        if val == digitalio.Direction.INPUT:
+            self._tca.gpio_direction[self._pin] = False
+        elif val == digitalio.Direction.OUTPUT:
+            self._tca.gpio_direction[self._pin] = True
+        else:
+            raise ValueError("Expected INPUT or OUTPUT direction!")
+
+    @property
+    def pull(self):
+        if self._tca.pullup[self._pin]:
+            return digitalio.Pull.UP
+        else:
+            return None
+
+    @pull.setter
+    def pull(self, val):
+        if val is digitalio.Pull.UP:
+            # for inputs, turn on the pullup (write high)
+            self._tca.pullup[self._pin] = True
+        elif val is None:
+            self._tca.pullup[self._pin] = False
+        else:
+            raise NotImplementedError("Pull-down resistors not supported.")
