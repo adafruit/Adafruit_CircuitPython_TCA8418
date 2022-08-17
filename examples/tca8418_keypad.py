@@ -21,11 +21,6 @@ for pin in KEYPADPINS:
     # we will stick events into the FIFO queue
     tca.event_mode_fifo[pin] = True
 
-    # make sure the key pins generate FIFO events
-    tca.enable_int[pin] = True
-    # we will stick events into the FIFO queue
-    tca.event_mode_fifo[pin] = True
-
 # turn on INT output pin
 tca.key_intenable = True
 
