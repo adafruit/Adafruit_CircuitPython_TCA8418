@@ -31,7 +31,7 @@ while True:
         # now print each event in the queue
         for _ in range(events):
             keyevent = tca.next_event
-            print("\tKey event: 0x%02X - GPIO #%d "  % (keyevent, (keyevent&0xF) - 1), end="")
+            print("\tKey event: 0x%02X - key #%d "  % (keyevent, keyevent&0x7F), end="")
             if keyevent & 0x80:
                 print("key down")
             else:
