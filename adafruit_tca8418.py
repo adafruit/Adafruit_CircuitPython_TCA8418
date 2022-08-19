@@ -336,8 +336,7 @@ class DigitalInOut:
     def pull(self):
         if self._tca.pullup[self._pin]:
             return digitalio.Pull.UP
-        else:
-            return None
+        return None
 
     @pull.setter
     def pull(self, val):
