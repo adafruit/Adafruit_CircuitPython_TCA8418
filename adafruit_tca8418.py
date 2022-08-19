@@ -270,9 +270,14 @@ Digital input/output of the TCA8418.
 class DigitalInOut:
     """Digital input/output of the TCA8418.  The interface is exactly the
     same as the digitalio.DigitalInOut class, however:
-      * TCA8418 does not support pull-down resistors
+
+      - TCA8418 does not support pull-down resistors
+
     Exceptions will be thrown when attempting to set unsupported pull
     configurations.
+
+    :param int pin_number: The pin number to use
+    :param TCA8418 tca: The TCA8418 object associated with the DIO
     """
 
     def __init__(self, pin_number, tca):
