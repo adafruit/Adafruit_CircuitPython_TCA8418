@@ -63,6 +63,18 @@ _TCA8418_REG_GPIOPULL1 = const(0x2C)
 
 
 class TCA8418_register:
+    """A class for interacting with the TCA8418 registers
+
+    :param TCA8418 tca: The associated TCA8418 object
+    :param int base_addr: The base address for this register
+    :param bool invert_value: Whether the value given should be interpreted as inverted
+        (True -> False), default is False (inputs are as-is, not inverted)
+    :param bool read_only: Whether the register is read-only or read/write, default
+        is False (register is read/write)
+    :param int|None initial_value: An initial value to provide to the register, default
+        is ``None`` (no default is provided)
+    """
+
     def __init__(
         self, tca, base_addr, invert_value=False, read_only=False, initial_value=None
     ):
