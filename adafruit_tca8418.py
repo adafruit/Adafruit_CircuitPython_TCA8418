@@ -346,6 +346,8 @@ class DigitalInOut:
         else:
             raise ValueError("Expected INPUT or OUTPUT direction!")
 
+        self._dir = val
+
     @property
     def pull(self):
         if self._tca.pullup[self._pin]:
