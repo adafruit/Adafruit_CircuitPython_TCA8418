@@ -9,14 +9,26 @@ from adafruit_tca8418 import TCA8418
 i2c = board.I2C()  # uses board.SCL and board.SDA
 
 from adafruit_debug_i2c import DebugI2C
+
 debug_i2c = DebugI2C(i2c)
 
 tca = TCA8418(i2c)
 
 # set up all R pins and some of the C pins as GPIO pins
-INPINS = (TCA8418.R0, TCA8418.R1, TCA8418.R2, TCA8418.R3, 
-          TCA8418.R4, TCA8418.R5, TCA8418.R6, TCA8418.R7,
-          TCA8418.C0, TCA8418.C1, TCA8418.C2, TCA8418.C3,)
+INPINS = (
+    TCA8418.R0,
+    TCA8418.R1,
+    TCA8418.R2,
+    TCA8418.R3,
+    TCA8418.R4,
+    TCA8418.R5,
+    TCA8418.R6,
+    TCA8418.R7,
+    TCA8418.C0,
+    TCA8418.C1,
+    TCA8418.C2,
+    TCA8418.C3,
+)
 
 # make them inputs with pullups
 for pin in INPINS:
@@ -41,10 +53,13 @@ while True:
         # now print each event in the queue
         for _ in range(events):
             keyevent = tca.next_event
-            print("\tKey event: 0x%02X - GPIO #%d "  % (keyevent, (keyevent&0xF) - 1), end="")
+            print(
+                "\tKey event: 0x%02X - GPIO #%d " % (keyevent, (keyevent & 0xF) - 1),
+                end="",
+            )
             if keyevent & 0x80:
                 print("key down")
             else:
                 print("key up")
-        tca.GPI_int = True # clear the IRQ by writing 1 to it
+        tca.GPI_int = True  # clear the IRQ by writing 1 to it
         time.sleep(0.01)

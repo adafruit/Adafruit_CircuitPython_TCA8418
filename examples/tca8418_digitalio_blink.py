@@ -13,7 +13,7 @@ tca = TCA8418(i2c)
 led = tca.get_pin(TCA8418.R0)
 
 # Setup R0 as an output that's at a low logic level default
-led.switch_to_output(value = False)
+led.switch_to_output(value=False)
 
 while True:
     led.value = True

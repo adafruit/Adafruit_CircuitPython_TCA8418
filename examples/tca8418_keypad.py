@@ -10,8 +10,16 @@ i2c = board.I2C()  # uses board.SCL and board.SDA
 tca = TCA8418(i2c)
 
 # set up all R0-R4 pins and C0-C3 pins as keypads
-KEYPADPINS = (TCA8418.R0, TCA8418.R1, TCA8418.R2, TCA8418.R3, 
-              TCA8418.C0, TCA8418.C1, TCA8418.C2, TCA8418.C3,)
+KEYPADPINS = (
+    TCA8418.R0,
+    TCA8418.R1,
+    TCA8418.R2,
+    TCA8418.R3,
+    TCA8418.C0,
+    TCA8418.C1,
+    TCA8418.C2,
+    TCA8418.C3,
+)
 
 # make them inputs with pullups
 for pin in KEYPADPINS:
@@ -31,10 +39,12 @@ while True:
         # now print each event in the queue
         for _ in range(events):
             keyevent = tca.next_event
-            print("\tKey event: 0x%02X - key #%d "  % (keyevent, keyevent&0x7F), end="")
+            print(
+                "\tKey event: 0x%02X - key #%d " % (keyevent, keyevent & 0x7F), end=""
+            )
             if keyevent & 0x80:
                 print("key down")
             else:
                 print("key up")
-        tca.key_int = True # clear the IRQ by writing 1 to it
+        tca.key_int = True  # clear the IRQ by writing 1 to it
         time.sleep(0.01)

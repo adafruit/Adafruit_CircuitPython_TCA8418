@@ -15,7 +15,7 @@ led = tca.get_pin(TCA8418.R0)
 button = tca.get_pin(TCA8418.R1)
 
 # Setup R0 as an output that's at a low logic level default
-led.switch_to_output(value = False)
+led.switch_to_output(value=False)
 # Setup R1 as an input with pullup
 button.switch_to_input(pull=digitalio.Pull.UP)
 

@@ -62,24 +62,27 @@ _TCA8418_REG_INTLVL1 = const(0x26)
 _TCA8418_REG_DEBOUNCEDIS1 = const(0x29)
 _TCA8418_REG_GPIOPULL1 = const(0x2C)
 
+
 class TCA8418_register:
-    def __init__(self, tca, base_addr, invert_value=False, read_only=False, initial_value=None):
+    def __init__(
+        self, tca, base_addr, invert_value=False, read_only=False, initial_value=None
+    ):
         self._tca = tca
         self._baseaddr = base_addr
         self._invert = invert_value
         self._ro = read_only
-        
+
         # theres 3 registers in a row for each setting
         if not read_only and initial_value is not None:
             self._tca._write_reg(base_addr, initial_value)
-            self._tca._write_reg(base_addr+1, initial_value)
-            self._tca._write_reg(base_addr+2, initial_value)
+            self._tca._write_reg(base_addr + 1, initial_value)
+            self._tca._write_reg(base_addr + 2, initial_value)
 
     def __index__(self):
         """Read all 18 bits of register data and return as one integer"""
-        val = self._tca._read_reg(self._baseaddr+2)
+        val = self._tca._read_reg(self._baseaddr + 2)
         val <<= 8
-        val |= self._tca._read_reg(self._baseaddr+1)
+        val |= self._tca._read_reg(self._baseaddr + 1)
         val <<= 8
         val |= self._tca._read_reg(self._baseaddr)
         val &= 0x3FFFF
@@ -99,7 +102,6 @@ class TCA8418_register:
         if self._invert:
             value = not value
         self._tca._set_gpio_register(self._baseaddr, pin_number, value)
-
 
 
 class TCA8418:
@@ -141,7 +143,7 @@ class TCA8418:
     C7 = 15
     C8 = 16
     C9 = 17
-    
+
     def __init__(self, i2c_bus, address=TCA8418_I2CADDR_DEFAULT):
         # pylint: disable=no-member
         self.i2c_device = i2c_device.I2CDevice(i2c_bus, address)
@@ -149,33 +151,51 @@ class TCA8418:
 
         # disable all interrupt
         self.enable_int = TCA8418_register(self, _TCA8418_REG_INTEN1, initial_value=0)
-        self.gpio_int_status = TCA8418_register(self, _TCA8418_REG_GPIOINTSTAT1, read_only=True)
-        x = self.gpio_int_status # read to clear
+        self.gpio_int_status = TCA8418_register(
+            self, _TCA8418_REG_GPIOINTSTAT1, read_only=True
+        )
+        x = self.gpio_int_status  # read to clear
 
         # plain GPIO expansion as indexable properties
 
         # set all pins to inputs
-        self.gpio_direction = TCA8418_register(self,_TCA8418_REG_GPIODIR1, initial_value=0)
+        self.gpio_direction = TCA8418_register(
+            self, _TCA8418_REG_GPIODIR1, initial_value=0
+        )
         # set all pins to GPIO
-        self.gpio_mode = TCA8418_register(self, _TCA8418_REG_KPGPIO1, invert_value=True, initial_value=0)
+        self.gpio_mode = TCA8418_register(
+            self, _TCA8418_REG_KPGPIO1, invert_value=True, initial_value=0
+        )
         self.keypad_mode = TCA8418_register(self, _TCA8418_REG_KPGPIO1)
         # set all pins low output
-        self.output_value = TCA8418_register(self, _TCA8418_REG_GPIODATOUT1, initial_value=0)
-        self.input_value = TCA8418_register(self, _TCA8418_REG_GPIODATSTAT1, read_only=True)
+        self.output_value = TCA8418_register(
+            self, _TCA8418_REG_GPIODATOUT1, initial_value=0
+        )
+        self.input_value = TCA8418_register(
+            self, _TCA8418_REG_GPIODATSTAT1, read_only=True
+        )
         # enable all pullups
-        self.pullup = TCA8418_register(self, _TCA8418_REG_GPIOPULL1, invert_value=True, initial_value=0)
+        self.pullup = TCA8418_register(
+            self, _TCA8418_REG_GPIOPULL1, invert_value=True, initial_value=0
+        )
         # enable all debounce
-        self.debounce = TCA8418_register(self, _TCA8418_REG_DEBOUNCEDIS1, invert_value=True, initial_value=0)
+        self.debounce = TCA8418_register(
+            self, _TCA8418_REG_DEBOUNCEDIS1, invert_value=True, initial_value=0
+        )
         # default int on falling
-        self.int_on_rising = TCA8418_register(self, _TCA8418_REG_INTLVL1, initial_value=0)
-        
+        self.int_on_rising = TCA8418_register(
+            self, _TCA8418_REG_INTLVL1, initial_value=0
+        )
+
         # default no gpio in event queue
-        self.event_mode_fifo = TCA8418_register(self, _TCA8418_REG_EVTMODE1, initial_value=0)
+        self.event_mode_fifo = TCA8418_register(
+            self, _TCA8418_REG_EVTMODE1, initial_value=0
+        )
 
         # read in event queue
-        #print(self.events_count, "events")
+        # print(self.events_count, "events")
         while self.events_count:
-            x = self.next_event # read and toss
+            x = self.next_event  # read and toss
 
         # reset interrutps
         self._write_reg(_TCA8418_REG_INTSTAT, 0x1F)
@@ -187,20 +207,17 @@ class TCA8418:
             raise RuntimeError("No events in FIFO")
         return self._read_reg(_TCA8418_REG_KEYEVENT)
 
-
     def _set_gpio_register(self, reg_base_addr, pin_number, value):
         if not 0 <= pin_number <= 17:
             raise ValueError("Pin number must be between 0 & 17")
-        reg_base_addr +=  pin_number // 8
+        reg_base_addr += pin_number // 8
         self._set_reg_bit(reg_base_addr, pin_number % 8, value)
-
 
     def _get_gpio_register(self, reg_base_addr, pin_number):
         if not 0 <= pin_number <= 17:
             raise ValueError("Pin number must be between 0 & 17")
-        reg_base_addr +=  pin_number // 8
+        reg_base_addr += pin_number // 8
         return self._get_reg_bit(reg_base_addr, pin_number % 8)
-
 
     def get_pin(self, pin):
         """Convenience function to create an instance of the DigitalInOut class
@@ -210,13 +227,12 @@ class TCA8418:
         assert 0 <= pin <= 17
         return DigitalInOut(pin, self)
 
-
     # register helpers
 
     def _set_reg_bit(self, addr, bitoffset, value):
         temp = self._read_reg(addr)
         if value:
-            temp |= (1 << bitoffset)
+            temp |= 1 << bitoffset
         else:
             temp &= ~(1 << bitoffset)
         self._write_reg(addr, temp)
@@ -224,12 +240,11 @@ class TCA8418:
     def _get_reg_bit(self, addr, bitoffset):
         temp = self._read_reg(addr)
         return bool(temp & (1 << bitoffset))
-    
 
     def _write_reg(self, addr, val):
         with self.i2c_device as i2c:
             self._buf[0] = addr
-            self._buf[1] = val            
+            self._buf[1] = val
             i2c.write(self._buf, end=2)
 
     def _read_reg(self, addr):
@@ -260,7 +275,6 @@ class DigitalInOut:
         self._pin = pin_number
         self._tca = tca
         self._tca.gpio_mode[pin_number] = True
-
 
     # kwargs in switch functions below are _necessary_ for compatibility
     # with DigitalInout class (which allows specifying pull, etc. which
