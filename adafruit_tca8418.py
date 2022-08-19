@@ -38,9 +38,8 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TCA8418.git"
 
 from micropython import const
 from adafruit_bus_device import i2c_device
-from adafruit_register.i2c_struct import ROUnaryStruct, UnaryStruct
-from adafruit_register.i2c_bit import RWBit, ROBit
-from adafruit_register.i2c_bits import RWBits, ROBits
+from adafruit_register.i2c_bit import RWBit
+from adafruit_register.i2c_bits import ROBits
 import digitalio
 
 TCA8418_I2CADDR_DEFAULT: int = const(0x34)  # Default I2C address
