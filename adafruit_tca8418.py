@@ -159,7 +159,7 @@ class TCA8418:
         self.gpio_int_status = TCA8418_register(
             self, _TCA8418_REG_GPIOINTSTAT1, read_only=True
         )
-        x = self.gpio_int_status  # read to clear
+        _ = self.gpio_int_status  # read to clear
 
         # plain GPIO expansion as indexable properties
 
@@ -200,7 +200,7 @@ class TCA8418:
         # read in event queue
         # print(self.events_count, "events")
         while self.events_count:
-            x = self.next_event  # read and toss
+            _ = self.next_event  # read and toss
 
         # reset interrutps
         self._write_reg(_TCA8418_REG_INTSTAT, 0x1F)
