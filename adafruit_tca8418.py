@@ -104,6 +104,7 @@ class TCA8418_register:
         self._tca._set_gpio_register(self._baseaddr, pin_number, value)
 
 
+# pylint: disable=too-many-instance-attributes
 class TCA8418:
     """Driver for the TCA8418 I2C Keyboard expander / multiplexor.
     :param ~busio.I2C i2c_bus: The I2C bus the TCA8418 is connected to.
