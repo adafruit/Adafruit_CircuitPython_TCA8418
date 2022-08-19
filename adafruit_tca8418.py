@@ -106,6 +106,7 @@ class TCA8418_register:
 # pylint: disable=too-many-instance-attributes
 class TCA8418:
     """Driver for the TCA8418 I2C Keyboard expander / multiplexor.
+
     :param ~busio.I2C i2c_bus: The I2C bus the TCA8418 is connected to.
     :param address: The I2C device address. Defaults to :const:`0x34`
     """
