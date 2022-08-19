@@ -350,6 +350,10 @@ class DigitalInOut:
 
     @property
     def pull(self):
+        """The pull setting for the digital IO, either `digitalio.Pull.UP`
+        for pull up, or ``None`` for no pull up
+        """
+
         if self._tca.pullup[self._pin]:
             return digitalio.Pull.UP
         return None
