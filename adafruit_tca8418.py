@@ -242,7 +242,9 @@ class TCA8418:
     def get_pin(self, pin):
         """Convenience function to create an instance of the DigitalInOut class
         pointing at the specified pin of this TCA8418 device.
-        :param int pin: pin to use for digital IO, 0 to 17
+
+        :param int pin: Pin to use for digital IO, 0 to 17 inclusive; you can
+            use the pins like TCA8418.R3 or TCA8418.C4 for convenience
         """
         assert 0 <= pin <= 17
         return DigitalInOut(pin, self)
