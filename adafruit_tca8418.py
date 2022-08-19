@@ -112,10 +112,10 @@ class TCA8418:
     """
 
     events_count = ROBits(4, _TCA8418_REG_KEYLCKEC, 0)
-    CAD_int = RWBit(_TCA8418_REG_INTSTAT, 4)
+    cad_int = RWBit(_TCA8418_REG_INTSTAT, 4)
     overflow_int = RWBit(_TCA8418_REG_INTSTAT, 3)
     keylock_int = RWBit(_TCA8418_REG_INTSTAT, 2)
-    GPI_int = RWBit(_TCA8418_REG_INTSTAT, 1)
+    gpi_int = RWBit(_TCA8418_REG_INTSTAT, 1)
     key_int = RWBit(_TCA8418_REG_INTSTAT, 0)
 
     gpi_event_while_locked = RWBit(_TCA8418_REG_CONFIG, 6)
@@ -204,7 +204,7 @@ class TCA8418:
 
         # reset interrutps
         self._write_reg(_TCA8418_REG_INTSTAT, 0x1F)
-        self.GPI_int = False
+        self.gpi_int = False
 
     @property
     def next_event(self):

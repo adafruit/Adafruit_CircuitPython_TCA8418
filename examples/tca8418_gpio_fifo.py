@@ -47,7 +47,7 @@ tca.key_intenable = True
 
 
 while True:
-    if tca.GPI_int:
+    if tca.gpi_int:
         # first figure out how big the queue is
         events = tca.events_count
         # now print each event in the queue
@@ -61,5 +61,5 @@ while True:
                 print("key down")
             else:
                 print("key up")
-        tca.GPI_int = True  # clear the IRQ by writing 1 to it
+        tca.gpi_int = True  # clear the IRQ by writing 1 to it
         time.sleep(0.01)
