@@ -75,6 +75,7 @@ class TCA8418_register:
         is ``None`` (no default is provided)
     """
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self, tca, base_addr, invert_value=False, read_only=False, initial_value=None
     ):
