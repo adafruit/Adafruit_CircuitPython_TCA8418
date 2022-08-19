@@ -272,14 +272,6 @@ class TCA8418:
         return self._buf[0]
 
 
-"""
-`digital_inout`
-====================================================
-Digital input/output of the TCA8418.
-* Author(s): Tony DiCola
-"""
-
-
 class DigitalInOut:
     """Digital input/output of the TCA8418.  The interface is exactly the
     same as the digitalio.DigitalInOut class, however:
@@ -288,6 +280,8 @@ class DigitalInOut:
 
     Exceptions will be thrown when attempting to set unsupported pull
     configurations.
+
+    * Author(s): Tony DiCola
 
     :param int pin_number: The pin number to use
     :param TCA8418 tca: The TCA8418 object associated with the DIO
