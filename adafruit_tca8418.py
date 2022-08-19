@@ -125,6 +125,8 @@ class TCA8418:
     GPI_intenable = RWBit(_TCA8418_REG_CONFIG, 1)
     key_intenable = RWBit(_TCA8418_REG_CONFIG, 0)
 
+    # pylint: disable=invalid-name
+
     R0 = 0
     R1 = 1
     R2 = 2
@@ -143,6 +145,8 @@ class TCA8418:
     C7 = 15
     C8 = 16
     C9 = 17
+
+    # pylint: enable=invalid-name
 
     def __init__(self, i2c_bus, address=TCA8418_I2CADDR_DEFAULT):
         # pylint: disable=no-member
