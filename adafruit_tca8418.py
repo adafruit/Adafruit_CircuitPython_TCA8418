@@ -98,7 +98,7 @@ class TCA8418_register:
     def __setitem__(self, pin_number, value):
         """Set a single bit at 'pin_number' offset to 'value'"""
         if self._ro:
-            raise NotimplementedErrror("Read only register")
+            raise NotImplementedError("Read only register")
         if self._invert:
             value = not value
         self._tca._set_gpio_register(self._baseaddr, pin_number, value)
