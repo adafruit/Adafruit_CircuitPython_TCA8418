@@ -16,31 +16,25 @@ Implementation Notes
 
 **Hardware:**
 
-.. todo:: Add links to any specific hardware product page(s), or category page(s).
-  Use unordered list & hyperlink rST inline format: "* `Link Text <url>`_"
+* `TCA8418 keyboard multiplexor <http://www.adafruit.com/products/5606>`_
 
 **Software and Dependencies:**
 
 * Adafruit CircuitPython firmware for the supported boards:
-  https://circuitpython.org/downloads
-
-.. todo:: Uncomment or remove the Bus Device and/or the Register library dependencies
-  based on the library's use of either.
+  https://circuitpython.org/downloadss
 
 # * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 # * Adafruit's Register library: https://github.com/adafruit/Adafruit_CircuitPython_Register
 """
-
-# imports
-
-__version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TCA8418.git"
 
 from micropython import const
 from adafruit_bus_device import i2c_device
 from adafruit_register.i2c_bit import RWBit
 from adafruit_register.i2c_bits import ROBits
 import digitalio
+
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TCA8418.git"
 
 TCA8418_I2CADDR_DEFAULT: int = const(0x34)  # Default I2C address
 
