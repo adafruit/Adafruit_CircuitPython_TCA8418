@@ -332,6 +332,9 @@ class DigitalInOut:
 
     @property
     def direction(self):
+        """The direction of the pin, works identically to
+        the one in `digitalio`
+        """
         return self._dir
 
     @direction.setter
