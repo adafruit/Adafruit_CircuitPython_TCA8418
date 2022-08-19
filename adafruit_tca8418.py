@@ -221,6 +221,8 @@ class TCA8418:
 
     @property
     def next_event(self):
+        """The next key event"""
+
         if self.events_count == 0:
             raise RuntimeError("No events in FIFO")
         return self._read_reg(_TCA8418_REG_KEYEVENT)
