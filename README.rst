@@ -97,7 +97,7 @@ Or the following command to update an existing version:
 Usage Example
 =============
 
-.. literalinclude:: ../examples/tca8418_digitalio_blink.py
+See the `examples/` folder for usage examples.
 
 Documentation
 =============
