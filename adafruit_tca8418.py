@@ -354,7 +354,7 @@ class DigitalInOut:
         self._dir = val
 
     @property
-    def pull(self) -> Union[None, digitalio.Pull.UP]:
+    def pull(self) -> Union[None, int]:
         """The pull setting for the digital IO, either `digitalio.Pull.UP`
         for pull up, or ``None`` for no pull up
         """
@@ -364,7 +364,7 @@ class DigitalInOut:
         return None
 
     @pull.setter
-    def pull(self, val: Optional[digitalio.Pull.UP]):
+    def pull(self, val: Optional[int]):
         if val is digitalio.Pull.UP:
             # for inputs, turn on the pullup (write high)
             self._tca.pullup[self._pin] = True
