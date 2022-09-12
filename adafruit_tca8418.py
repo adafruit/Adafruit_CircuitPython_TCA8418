@@ -33,6 +33,12 @@ from adafruit_register.i2c_bit import RWBit
 from adafruit_register.i2c_bits import ROBits
 import digitalio
 
+try:
+    from typing import Optional, Union
+    from busio import I2C
+except ImportError:
+    pass
+
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_TCA8418.git"
 
@@ -71,8 +77,13 @@ class TCA8418_register:
 
     # pylint: disable=too-many-arguments
     def __init__(
-        self, tca, base_addr, invert_value=False, read_only=False, initial_value=None
-    ):
+        self,
+        tca: "TCA8418",
+        base_addr: int,
+        invert_value: bool = False,
+        read_only: bool = False,
+        initial_value: Optional[int] = None,
+    ) -> None:
         self._tca = tca
         self._baseaddr = base_addr
         self._invert = invert_value
@@ -84,7 +95,7 @@ class TCA8418_register:
             self._tca._write_reg(base_addr + 1, initial_value)
             self._tca._write_reg(base_addr + 2, initial_value)
 
-    def __index__(self):
+    def __index__(self) -> int:
         """Read all 18 bits of register data and return as one integer"""
         val = self._tca._read_reg(self._baseaddr + 2)
         val <<= 8
@@ -94,14 +105,14 @@ class TCA8418_register:
         val &= 0x3FFFF
         return val
 
-    def __getitem__(self, pin_number):
+    def __getitem__(self, pin_number: int) -> int:
         """Read the single bit at 'pin_number' offset"""
         value = self._tca._get_gpio_register(self._baseaddr, pin_number)
         if self._invert:
             value = not value
         return value
 
-    def __setitem__(self, pin_number, value):
+    def __setitem__(self, pin_number: int, value: int) -> None:
         """Set a single bit at 'pin_number' offset to 'value'"""
         if self._ro:
             raise NotImplementedError("Read only register")
@@ -156,7 +167,7 @@ class TCA8418:
 
     # pylint: enable=invalid-name
 
-    def __init__(self, i2c_bus, address=TCA8418_I2CADDR_DEFAULT):
+    def __init__(self, i2c_bus: I2C, address: int = TCA8418_I2CADDR_DEFAULT) -> None:
         # pylint: disable=no-member
         self.i2c_device = i2c_device.I2CDevice(i2c_bus, address)
         self._buf = bytearray(2)
@@ -214,7 +225,7 @@ class TCA8418:
         self.gpi_int = False
 
     @property
-    def next_event(self):
+    def next_event(self) -> int:
         """The next key event"""
 
         if self.events_count == 0:
@@ -233,7 +244,7 @@ class TCA8418:
         reg_base_addr += pin_number // 8
         return self._get_reg_bit(reg_base_addr, pin_number % 8)
 
-    def get_pin(self, pin):
+    def get_pin(self, pin: int) -> digitalio.DigitalInOut:
         """Convenience function to create an instance of the DigitalInOut class
         pointing at the specified pin of this TCA8418 device.
 
@@ -245,7 +256,7 @@ class TCA8418:
 
     # register helpers
 
-    def _set_reg_bit(self, addr, bitoffset, value):
+    def _set_reg_bit(self, addr: int, bitoffset: int, value: int) -> None:
         temp = self._read_reg(addr)
         if value:
             temp |= 1 << bitoffset
@@ -253,17 +264,17 @@ class TCA8418:
             temp &= ~(1 << bitoffset)
         self._write_reg(addr, temp)
 
-    def _get_reg_bit(self, addr, bitoffset):
+    def _get_reg_bit(self, addr: int, bitoffset: int) -> bool:
         temp = self._read_reg(addr)
         return bool(temp & (1 << bitoffset))
 
-    def _write_reg(self, addr, val):
+    def _write_reg(self, addr: int, val: int):
         with self.i2c_device as i2c:
             self._buf[0] = addr
             self._buf[1] = val
             i2c.write(self._buf, end=2)
 
-    def _read_reg(self, addr):
+    def _read_reg(self, addr: int) -> int:
         with self.i2c_device as i2c:
             self._buf[0] = addr
             i2c.write_then_readinto(self._buf, self._buf, out_end=1, in_end=1)
@@ -285,7 +296,7 @@ class DigitalInOut:
     :param TCA8418 tca: The TCA8418 object associated with the DIO
     """
 
-    def __init__(self, pin_number, tca):
+    def __init__(self, pin_number: int, tca: "TCA8418"):
         """Specify the pin number of the TCA8418 0..17, and instance."""
         self._pin = pin_number
         self._tca = tca
@@ -296,14 +307,14 @@ class DigitalInOut:
     # is unused by this class).  Do not remove them, instead turn off pylint
     # in this case.
     # pylint: disable=unused-argument
-    def switch_to_output(self, value=False, **kwargs):
+    def switch_to_output(self, value: bool = False, **kwargs) -> None:
         """Switch the pin state to a digital output with the provided starting
         value (True/False for high or low, default is False/low).
         """
         self.direction = digitalio.Direction.OUTPUT
         self.value = value
 
-    def switch_to_input(self, pull=None, **kwargs):
+    def switch_to_input(self, pull: Optional[digitalio.Pull] = None, **kwargs) -> None:
         """Switch the pin state to a digital input which is the same as
         setting the light pullup on.  Note that true tri-state or
         pull-down resistors are NOT supported!
@@ -314,25 +325,25 @@ class DigitalInOut:
     # pylint: enable=unused-argument
 
     @property
-    def value(self):
+    def value(self) -> bool:
         """The value of the pin, either True for high/pulled-up or False for
         low.
         """
         return self._tca.input_value[self._pin]
 
     @value.setter
-    def value(self, val):
+    def value(self, val: bool) -> None:
         self._tca.output_value[self._pin] = val
 
     @property
-    def direction(self):
+    def direction(self) -> digitalio.Direction:
         """The direction of the pin, works identically to
         the one in `digitalio`
         """
         return self._dir
 
     @direction.setter
-    def direction(self, val):
+    def direction(self, val: digitalio.Direction) -> None:
         if val == digitalio.Direction.INPUT:
             self._tca.gpio_direction[self._pin] = False
         elif val == digitalio.Direction.OUTPUT:
@@ -343,7 +354,7 @@ class DigitalInOut:
         self._dir = val
 
     @property
-    def pull(self):
+    def pull(self) -> Union[None, digitalio.Pull.UP]:
         """The pull setting for the digital IO, either `digitalio.Pull.UP`
         for pull up, or ``None`` for no pull up
         """
@@ -353,7 +364,7 @@ class DigitalInOut:
         return None
 
     @pull.setter
-    def pull(self, val):
+    def pull(self, val: Optional[digitalio.Pull.UP]):
         if val is digitalio.Pull.UP:
             # for inputs, turn on the pullup (write high)
             self._tca.pullup[self._pin] = True
