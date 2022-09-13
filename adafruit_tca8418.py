@@ -35,6 +35,7 @@ import digitalio
 
 try:
     from typing import Optional, Union
+    from typing_extensions import Literal
     from busio import I2C
 except ImportError:
     pass
@@ -354,7 +355,7 @@ class DigitalInOut:
         self._dir = val
 
     @property
-    def pull(self) -> Union[None, int]:
+    def pull(self) -> Union[None, Literal[digitalio.Pull.UP]]:
         """The pull setting for the digital IO, either `digitalio.Pull.UP`
         for pull up, or ``None`` for no pull up
         """
@@ -364,7 +365,7 @@ class DigitalInOut:
         return None
 
     @pull.setter
-    def pull(self, val: Optional[int]):
+    def pull(self, val: Optional[digitalio.Pull.UP]):
         if val is digitalio.Pull.UP:
             # for inputs, turn on the pullup (write high)
             self._tca.pullup[self._pin] = True
