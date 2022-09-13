@@ -34,7 +34,7 @@ from adafruit_register.i2c_bits import ROBits
 import digitalio
 
 try:
-    from typing import Optional, Union
+    from typing import Optional
     from typing_extensions import Literal
     from busio import I2C
 except ImportError:
@@ -106,7 +106,7 @@ class TCA8418_register:
         val &= 0x3FFFF
         return val
 
-    def __getitem__(self, pin_number: int) -> int:
+    def __getitem__(self, pin_number: int) -> bool:
         """Read the single bit at 'pin_number' offset"""
         value = self._tca._get_gpio_register(self._baseaddr, pin_number)
         if self._invert:
@@ -245,7 +245,7 @@ class TCA8418:
         reg_base_addr += pin_number // 8
         return self._get_reg_bit(reg_base_addr, pin_number % 8)
 
-    def get_pin(self, pin: int) -> digitalio.DigitalInOut:
+    def get_pin(self, pin: int) -> "DigitalInOut":
         """Convenience function to create an instance of the DigitalInOut class
         pointing at the specified pin of this TCA8418 device.
 
@@ -257,7 +257,7 @@ class TCA8418:
 
     # register helpers
 
-    def _set_reg_bit(self, addr: int, bitoffset: int, value: int) -> None:
+    def _set_reg_bit(self, addr: int, bitoffset: int, value: bool) -> None:
         temp = self._read_reg(addr)
         if value:
             temp |= 1 << bitoffset
@@ -269,7 +269,7 @@ class TCA8418:
         temp = self._read_reg(addr)
         return bool(temp & (1 << bitoffset))
 
-    def _write_reg(self, addr: int, val: int):
+    def _write_reg(self, addr: int, val: int) -> None:
         with self.i2c_device as i2c:
             self._buf[0] = addr
             self._buf[1] = val
@@ -355,7 +355,7 @@ class DigitalInOut:
         self._dir = val
 
     @property
-    def pull(self) -> Union[None, Literal[digitalio.Pull.UP]]:
+    def pull(self) -> Optional[Literal[digitalio.Pull.UP]]:
         """The pull setting for the digital IO, either `digitalio.Pull.UP`
         for pull up, or ``None`` for no pull up
         """
