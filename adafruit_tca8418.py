@@ -365,7 +365,7 @@ class DigitalInOut:
         return None
 
     @pull.setter
-    def pull(self, val: Optional[Literal[digitalio.Pull.UP]]):
+    def pull(self, val: Optional[Literal[digitalio.Pull.UP]]) -> None:
         if val is digitalio.Pull.UP:
             # for inputs, turn on the pullup (write high)
             self._tca.pullup[self._pin] = True
