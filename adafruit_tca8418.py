@@ -113,7 +113,7 @@ class TCA8418_register:
             value = not value
         return value
 
-    def __setitem__(self, pin_number: int, value: int) -> None:
+    def __setitem__(self, pin_number: int, value: bool) -> None:
         """Set a single bit at 'pin_number' offset to 'value'"""
         if self._ro:
             raise NotImplementedError("Read only register")
@@ -233,13 +233,15 @@ class TCA8418:
             raise RuntimeError("No events in FIFO")
         return self._read_reg(_TCA8418_REG_KEYEVENT)
 
-    def _set_gpio_register(self, reg_base_addr, pin_number, value):
+    def _set_gpio_register(
+        self, reg_base_addr: int, pin_number: int, value: bool
+    ) -> None:
         if not 0 <= pin_number <= 17:
             raise ValueError("Pin number must be between 0 & 17")
         reg_base_addr += pin_number // 8
         self._set_reg_bit(reg_base_addr, pin_number % 8, value)
 
-    def _get_gpio_register(self, reg_base_addr, pin_number):
+    def _get_gpio_register(self, reg_base_addr: int, pin_number: int) -> bool:
         if not 0 <= pin_number <= 17:
             raise ValueError("Pin number must be between 0 & 17")
         reg_base_addr += pin_number // 8
@@ -297,7 +299,7 @@ class DigitalInOut:
     :param TCA8418 tca: The TCA8418 object associated with the DIO
     """
 
-    def __init__(self, pin_number: int, tca: "TCA8418"):
+    def __init__(self, pin_number: int, tca: "TCA8418") -> None:
         """Specify the pin number of the TCA8418 0..17, and instance."""
         self._pin = pin_number
         self._tca = tca
