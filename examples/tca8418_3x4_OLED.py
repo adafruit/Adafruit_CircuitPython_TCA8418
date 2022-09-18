@@ -18,10 +18,7 @@ i2c = board.I2C()  # uses board.SCL and board.SDA
 tca = TCA8418(i2c)
 display_bus = displayio.I2CDisplay(i2c, device_address=0x3D, reset=oled_reset)
 
-keymap = (('*', '0', '#'),
-          ('7', '8', '9'),
-          ('4', '5', '6'),
-          ('1', '2', '3'))
+keymap = (("*", "0", "#"), ("7", "8", "9"), ("4", "5", "6"), ("1", "2", "3"))
 
 # set up all R0-R2 pins and C0-C3 pins as keypads
 KEYPADPINS = (
@@ -59,12 +56,14 @@ display.show(splash)
 # text area setup
 title_text = "TCA8418 Demo"
 title_area = label.Label(
-    terminalio.FONT, text=title_text, color=0xFFFFFF, x=10, y=10 // 2+1)
+    terminalio.FONT, text=title_text, color=0xFFFFFF, x=10, y=10 // 2 + 1
+)
 splash.append(title_area)
 
 key_text = " "
 key_area = label.Label(
-    terminalio.FONT, text=key_text, color=0xFFFFFF, x=10, y=HEIGHT // 2+1)
+    terminalio.FONT, text=key_text, color=0xFFFFFF, x=10, y=HEIGHT // 2 + 1
+)
 splash.append(key_area)
 
 while True:
