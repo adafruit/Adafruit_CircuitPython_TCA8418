@@ -77,7 +77,7 @@ while True:
             event = keyevent & 0x7F
             event -= 1
             #  figure out row
-            row = int(event / 10)
+            row = event // 10
             #  figure out column
             col = event % 10
             #  print event type first
