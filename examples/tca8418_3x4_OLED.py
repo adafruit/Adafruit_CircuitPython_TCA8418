@@ -15,6 +15,7 @@ displayio.release_displays()
 oled_reset = board.D1
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 tca = TCA8418(i2c)
 display_bus = displayio.I2CDisplay(i2c, device_address=0x3D, reset=oled_reset)
 

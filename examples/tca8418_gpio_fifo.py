@@ -8,6 +8,7 @@ from adafruit_debug_i2c import DebugI2C
 from adafruit_tca8418 import TCA8418
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 
 debug_i2c = DebugI2C(i2c)
 
