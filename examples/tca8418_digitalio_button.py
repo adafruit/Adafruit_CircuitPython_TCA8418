@@ -8,6 +8,7 @@ import digitalio
 from adafruit_tca8418 import TCA8418
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 tca = TCA8418(i2c)
 
 # get a 'digitalio' like pins from the tca

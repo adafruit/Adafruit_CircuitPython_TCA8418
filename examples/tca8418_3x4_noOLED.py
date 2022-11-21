@@ -7,6 +7,7 @@ import board
 from adafruit_tca8418 import TCA8418
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 tca = TCA8418(i2c)
 
 keymap = (("*", "0", "#"), ("7", "8", "9"), ("4", "5", "6"), ("1", "2", "3"))
