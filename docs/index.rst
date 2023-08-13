@@ -24,7 +24,7 @@ Table of Contents
 .. toctree::
     :caption: Tutorials
 
-    TCA8418 Keyboard Multiplexor <http://www.adafruit.com/products/5606>
+    TCA8418 Keypad Matrix and GPIO Expander Breakout <https://learn.adafruit.com/adafruit-tca8418-keypad-matrix-and-gpio-expander-breakout>
 
 .. toctree::
     :caption: Related Products
