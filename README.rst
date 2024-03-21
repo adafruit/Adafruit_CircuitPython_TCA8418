@@ -86,7 +86,7 @@ following command to install:
 
 .. code-block:: shell
 
-    circup install tca8418
+    circup install adafruit_tca8418
 
 Or the following command to update an existing version:
 
