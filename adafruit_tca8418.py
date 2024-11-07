@@ -16,7 +16,7 @@ Implementation Notes
 
 **Hardware:**
 
-* `TCA8418 keyboard multiplexor <http://www.adafruit.com/products/5606>`_
+* `TCA8418 keyboard multiplexor <http://www.adafruit.com/products/4918>`_
 
 **Software and Dependencies:**
 
