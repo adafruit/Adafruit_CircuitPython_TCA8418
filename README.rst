@@ -40,7 +40,7 @@ or individual libraries can be installed using
 
 Works with the TCA8418 keyboard multiplexor.
 
-`Purchase one from the Adafruit shop <http://www.adafruit.com/products/5606>`_
+`Purchase one from the Adafruit shop <http://www.adafruit.com/products/4918>`_
 
 
 Installing from PyPI
