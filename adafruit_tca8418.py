@@ -27,16 +27,17 @@ Implementation Notes
 # * Adafruit's Register library: https://github.com/adafruit/Adafruit_CircuitPython_Register
 """
 
-from micropython import const
+import digitalio
 from adafruit_bus_device import i2c_device
 from adafruit_register.i2c_bit import RWBit
 from adafruit_register.i2c_bits import ROBits
-import digitalio
+from micropython import const
 
 try:
     from typing import Optional
-    from typing_extensions import Literal
+
     from busio import I2C
+    from typing_extensions import Literal
 except ImportError:
     pass
 
@@ -76,7 +77,6 @@ class TCA8418_register:
         is ``None`` (no default is provided)
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         tca: "TCA8418",
@@ -122,7 +122,6 @@ class TCA8418_register:
         self._tca._set_gpio_register(self._baseaddr, pin_number, value)
 
 
-# pylint: disable=too-many-instance-attributes
 class TCA8418:
     """Driver for the TCA8418 I2C Keyboard expander / multiplexor.
 
@@ -144,8 +143,6 @@ class TCA8418:
     keylock_intenable = RWBit(_TCA8418_REG_CONFIG, 2)
     GPI_intenable = RWBit(_TCA8418_REG_CONFIG, 1)
     key_intenable = RWBit(_TCA8418_REG_CONFIG, 0)
-
-    # pylint: disable=invalid-name
 
     R0 = 0
     R1 = 1
@@ -169,35 +166,26 @@ class TCA8418:
     # pylint: enable=invalid-name
 
     def __init__(self, i2c_bus: I2C, address: int = TCA8418_I2CADDR_DEFAULT) -> None:
-        # pylint: disable=no-member
         self.i2c_device = i2c_device.I2CDevice(i2c_bus, address)
         self._buf = bytearray(2)
 
         # disable all interrupt
         self.enable_int = TCA8418_register(self, _TCA8418_REG_INTEN1, initial_value=0)
-        self.gpio_int_status = TCA8418_register(
-            self, _TCA8418_REG_GPIOINTSTAT1, read_only=True
-        )
+        self.gpio_int_status = TCA8418_register(self, _TCA8418_REG_GPIOINTSTAT1, read_only=True)
         _ = self.gpio_int_status  # read to clear
 
         # plain GPIO expansion as indexable properties
 
         # set all pins to inputs
-        self.gpio_direction = TCA8418_register(
-            self, _TCA8418_REG_GPIODIR1, initial_value=0
-        )
+        self.gpio_direction = TCA8418_register(self, _TCA8418_REG_GPIODIR1, initial_value=0)
         # set all pins to GPIO
         self.gpio_mode = TCA8418_register(
             self, _TCA8418_REG_KPGPIO1, invert_value=True, initial_value=0
         )
         self.keypad_mode = TCA8418_register(self, _TCA8418_REG_KPGPIO1)
         # set all pins low output
-        self.output_value = TCA8418_register(
-            self, _TCA8418_REG_GPIODATOUT1, initial_value=0
-        )
-        self.input_value = TCA8418_register(
-            self, _TCA8418_REG_GPIODATSTAT1, read_only=True
-        )
+        self.output_value = TCA8418_register(self, _TCA8418_REG_GPIODATOUT1, initial_value=0)
+        self.input_value = TCA8418_register(self, _TCA8418_REG_GPIODATSTAT1, read_only=True)
         # enable all pullups
         self.pullup = TCA8418_register(
             self, _TCA8418_REG_GPIOPULL1, invert_value=True, initial_value=0
@@ -207,14 +195,10 @@ class TCA8418:
             self, _TCA8418_REG_DEBOUNCEDIS1, invert_value=True, initial_value=0
         )
         # default int on falling
-        self.int_on_rising = TCA8418_register(
-            self, _TCA8418_REG_INTLVL1, initial_value=0
-        )
+        self.int_on_rising = TCA8418_register(self, _TCA8418_REG_INTLVL1, initial_value=0)
 
         # default no gpio in event queue
-        self.event_mode_fifo = TCA8418_register(
-            self, _TCA8418_REG_EVTMODE1, initial_value=0
-        )
+        self.event_mode_fifo = TCA8418_register(self, _TCA8418_REG_EVTMODE1, initial_value=0)
 
         # read in event queue
         # print(self.events_count, "events")
@@ -233,9 +217,7 @@ class TCA8418:
             raise RuntimeError("No events in FIFO")
         return self._read_reg(_TCA8418_REG_KEYEVENT)
 
-    def _set_gpio_register(
-        self, reg_base_addr: int, pin_number: int, value: bool
-    ) -> None:
+    def _set_gpio_register(self, reg_base_addr: int, pin_number: int, value: bool) -> None:
         if not 0 <= pin_number <= 17:
             raise ValueError("Pin number must be between 0 & 17")
         reg_base_addr += pin_number // 8
@@ -309,7 +291,6 @@ class DigitalInOut:
     # with DigitalInout class (which allows specifying pull, etc. which
     # is unused by this class).  Do not remove them, instead turn off pylint
     # in this case.
-    # pylint: disable=unused-argument
     def switch_to_output(self, value: bool = False, **kwargs) -> None:
         """Switch the pin state to a digital output with the provided starting
         value (True/False for high or low, default is False/low).
@@ -324,8 +305,6 @@ class DigitalInOut:
         """
         self.direction = digitalio.Direction.INPUT
         self.pull = pull
-
-    # pylint: enable=unused-argument
 
     @property
     def value(self) -> bool:

@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: Unlicense
 
 import time
+
 import board
 import digitalio
+
 from adafruit_tca8418 import TCA8418
 
 i2c = board.I2C()  # uses board.SCL and board.SDA

@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: Unlicense
 
 import time
+
+import adafruit_displayio_ssd1306
 import board
 import displayio
 import terminalio
 from adafruit_display_text import label
-import adafruit_displayio_ssd1306
+
 from adafruit_tca8418 import TCA8418
 
 displayio.release_displays()
@@ -56,15 +58,11 @@ display.root_group = splash
 
 # text area setup
 title_text = "TCA8418 Demo"
-title_area = label.Label(
-    terminalio.FONT, text=title_text, color=0xFFFFFF, x=10, y=10 // 2 + 1
-)
+title_area = label.Label(terminalio.FONT, text=title_text, color=0xFFFFFF, x=10, y=10 // 2 + 1)
 splash.append(title_area)
 
 key_text = " "
-key_area = label.Label(
-    terminalio.FONT, text=key_text, color=0xFFFFFF, x=10, y=HEIGHT // 2 + 1
-)
+key_area = label.Label(terminalio.FONT, text=key_text, color=0xFFFFFF, x=10, y=HEIGHT // 2 + 1)
 splash.append(key_area)
 
 while True:
