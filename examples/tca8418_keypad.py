@@ -3,7 +3,9 @@
 # SPDX-License-Identifier: Unlicense
 
 import time
+
 import board
+
 from adafruit_tca8418 import TCA8418
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
@@ -40,9 +42,7 @@ while True:
         # now print each event in the queue
         for _ in range(events):
             keyevent = tca.next_event
-            print(
-                "\tKey event: 0x%02X - key #%d " % (keyevent, keyevent & 0x7F), end=""
-            )
+            print("\tKey event: 0x%02X - key #%d " % (keyevent, keyevent & 0x7F), end="")
             if keyevent & 0x80:
                 print("key down")
             else:
