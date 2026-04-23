@@ -84,10 +84,10 @@ while True:
             if keyevent & 0x80:
                 print("Key down")
                 #  print each key pressed to display consecutively
-                key_area.text = key_area.text + keymap[col][row]
+                key_area.text += keymap[col][row]
             else:
                 print("Key up")
             #  use row & column coordinates to print key name
-            print("Row %d, Column %d, Key %s" % (row, col, keymap[col][row]))
+            print(f"Row {row}, Column {col}, Key {keymap[col][row]}")
         tca.key_int = True  # clear the IRQ by writing 1 to it
         time.sleep(0.01)

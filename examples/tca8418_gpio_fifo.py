@@ -56,7 +56,7 @@ while True:
         for _ in range(events):
             keyevent = tca.next_event
             print(
-                "\tKey event: 0x%02X - GPIO #%d " % (keyevent, (keyevent & 0xF) - 1),
+                f"\tKey event: {keyevent:#04X} - GPIO #{(keyevent & 0xF) - 1} ",
                 end="",
             )
             if keyevent & 0x80:
